@@ -1,0 +1,76 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/rust
+{
+	"name": "Rust",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	// "image": "mcr.microsoft.com/devcontainers/rust:1-1-bookworm",
+	"dockerFile": "./Dockerfile",
+	"build": {
+		"args": {
+			// https://github.com/rui314/mold
+			"MOLD_VERSION": "v2.2.0"
+		}
+	},
+	"features": {
+		// 右記のURLから利用する機能をインストールする https://containers.dev/features
+		"ghcr.io/devcontainers/features/rust:1": {},
+		"ghcr.io/devcontainers/features/aws-cli:1": {},
+		"ghcr.io/devcontainers/features/azure-cli:1": {},
+		"ghcr.io/devcontainers/features/github-cli:1": {},
+		"ghcr.io/guiyomh/features/vim:0": {},
+		"ghcr.io/enricosecondulfo/devcontainer-features/volta:1": {},
+		"ghcr.io/devcontainers-community/npm-features/prettier:1": {},
+		"ghcr.io/lee-orr/rusty-dev-containers/cargo-expand:0": {},
+		"ghcr.io/lee-orr/rusty-dev-containers/cargo-make:0": {},
+		"ghcr.io/lee-orr/rusty-dev-containers/cargo-nextest:0": {},
+		"ghcr.io/lee-orr/rusty-dev-containers/cargo-watch:0": {}
+	},
+
+	// Use 'mounts' to make the cargo cache persistent in a Docker Volume.
+	// "mounts": [
+	// 	{
+	// 		"source": "devcontainer-cargo-cache-${devcontainerId}",
+	// 		"target": "/usr/local/cargo",
+	// 		"type": "volume"
+	// 	}
+	// ]
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "rustc --version",
+
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"editor.defaultFormatter": "rust-lang.rust-analyzer",
+				"editor.formatOnSave": true,
+				"[markdown]": {
+					"editor.defaultFormatter": "esbenp.prettier-vscode",
+					"editor.unicodeHighlight.ambiguousCharacters": false,
+					"editor.unicodeHighlight.invisibleCharacters": false,
+					"diffEditor.ignoreTrimWhitespace": false,
+					"editor.wordWrap": "on",
+					"editor.quickSuggestions": {
+						"comments": "off",
+						"strings": "off",
+						"other": "off"
+					}
+				}
+			},
+			"extensions": [
+				"github.vscode-github-actions",
+				"patbenatar.advanced-new-file",
+				"IronGeek.vscode-env"
+			]
+		}
+	}
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}
