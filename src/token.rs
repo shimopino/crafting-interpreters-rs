@@ -1,3 +1,10 @@
+pub struct Token {
+    ty: TokenType,
+    lexeme: String,
+    literal: String,
+    line: u64,
+}
+
 pub enum TokenType {
     // 記号1個のトークン
     LParan,
