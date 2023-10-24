@@ -49,7 +49,15 @@ impl Scanner {
             '-' => self.add_token(TokenType::Minus, "-".to_string()),
             '+' => self.add_token(TokenType::Plus, "+".to_string()),
             ';' => self.add_token(TokenType::SemiColon, ";".to_string()),
-            '/' => self.add_token(TokenType::Slash, "/".to_string()),
+            '/' => {
+                if self.matches('/') {
+                    while self.peek() != '\n' && !self.is_at_end() {
+                        self.advance();
+                    }
+                } else {
+                    self.add_token(TokenType::Slash, "/".to_string());
+                }
+            }
             '*' => self.add_token(TokenType::Star, "*".to_string()),
             '!' => {
                 if self.matches('=') {
@@ -78,6 +86,11 @@ impl Scanner {
                 } else {
                     self.add_token(TokenType::Greater, "<".to_string())
                 };
+            }
+            ' ' | '\r' | '\t' => return,
+            '\n' => {
+                self.line += 1;
+                return;
             }
             _ => unimplemented!(),
         };
@@ -109,6 +122,13 @@ impl Scanner {
 
         self.current += 1;
         true
+    }
+
+    fn peek(&self) -> char {
+        if self.is_at_end() {
+            return '\0';
+        }
+        return self.source[self.current];
     }
 
     fn is_at_end(&self) -> bool {
@@ -264,6 +284,48 @@ mod tests {
             Token {
                 ty: TokenType::Equal,
                 literal: "=".to_string(),
+                lexeme: String::new(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Eof,
+                literal: "".to_string(),
+                lexeme: String::new(),
+                line: 1,
+            },
+        ];
+
+        let mut scanner = Scanner::new();
+        scanner.scan_tokens(input);
+
+        for (idx, token) in scanner.tokens.into_iter().enumerate() {
+            let exp_token = &expected[idx];
+            assert_eq!(
+                token.ty, exp_token.ty,
+                "tokens[{idx}], got={}, expecte={}",
+                token.ty, exp_token.ty
+            );
+        }
+    }
+
+    #[test]
+    fn test_comment_out() {
+        let input = r#"
+        ( 
+            // コメントアウト
+        ) 
+        "#;
+
+        let expected = vec![
+            Token {
+                ty: TokenType::LParan,
+                literal: "(".to_string(),
+                lexeme: String::new(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::RParan,
+                literal: ")".to_string(),
                 lexeme: String::new(),
                 line: 1,
             },
