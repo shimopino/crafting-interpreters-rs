@@ -56,3 +56,24 @@ pub enum TokenType {
     // End of file
     Eof,
 }
+
+impl std::fmt::Display for TokenType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        use TokenType::*;
+
+        match self {
+            LParan => write!(f, "("),
+            RParan => write!(f, ")"),
+            LBrace => write!(f, "{{"),
+            RBrace => write!(f, "}}"),
+            Comma => write!(f, ","),
+            Dot => write!(f, "."),
+            Minus => write!(f, "-"),
+            Plus => write!(f, "+"),
+            SemiColon => write!(f, ";"),
+            Slash => write!(f, "/"),
+            Star => write!(f, "*"),
+            _ => todo!(),
+        }
+    }
+}

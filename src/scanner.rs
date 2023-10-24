@@ -163,6 +163,13 @@ mod tests {
         let mut scanner = Scanner::new();
         scanner.scan_tokens(input);
 
-        assert_eq!(scanner.tokens, expected);
+        for (idx, token) in scanner.tokens.into_iter().enumerate() {
+            let exp_token = &expected[idx];
+            assert_eq!(
+                token, *exp_token,
+                "tokens[{idx}] - got={}, expected={}",
+                token.ty, exp_token.ty,
+            );
+        }
     }
 }
