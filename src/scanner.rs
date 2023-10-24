@@ -83,12 +83,72 @@ mod tests {
 
     #[test]
     fn test_one_char_token() {
-        let input = "(";
+        let input = "(){},.-+;/*";
 
         let expected = vec![
             Token {
                 ty: TokenType::LParan,
                 literal: "(".to_string(),
+                lexeme: String::new(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::RParan,
+                literal: ")".to_string(),
+                lexeme: String::new(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::LBrace,
+                literal: "{".to_string(),
+                lexeme: String::new(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::RBrace,
+                literal: "}".to_string(),
+                lexeme: String::new(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Comma,
+                literal: ",".to_string(),
+                lexeme: String::new(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Dot,
+                literal: ".".to_string(),
+                lexeme: String::new(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Minus,
+                literal: "-".to_string(),
+                lexeme: String::new(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Plus,
+                literal: "+".to_string(),
+                lexeme: String::new(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::SemiColon,
+                literal: ";".to_string(),
+                lexeme: String::new(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Slash,
+                literal: "/".to_string(),
+                lexeme: String::new(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Star,
+                literal: "*".to_string(),
                 lexeme: String::new(),
                 line: 1,
             },
