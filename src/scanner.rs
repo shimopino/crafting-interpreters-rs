@@ -51,6 +51,34 @@ impl Scanner {
             ';' => self.add_token(TokenType::SemiColon, ";".to_string()),
             '/' => self.add_token(TokenType::Slash, "/".to_string()),
             '*' => self.add_token(TokenType::Star, "*".to_string()),
+            '!' => {
+                if self.matches('=') {
+                    self.add_token(TokenType::BangEqual, "!=".to_string())
+                } else {
+                    self.add_token(TokenType::Bang, "!".to_string())
+                };
+            }
+            '=' => {
+                if self.matches('=') {
+                    self.add_token(TokenType::EqualEqual, "==".to_string())
+                } else {
+                    self.add_token(TokenType::Equal, "=".to_string())
+                };
+            }
+            '<' => {
+                if self.matches('=') {
+                    self.add_token(TokenType::LessEqual, "<=".to_string())
+                } else {
+                    self.add_token(TokenType::Less, "<".to_string())
+                };
+            }
+            '>' => {
+                if self.matches('=') {
+                    self.add_token(TokenType::GreaterEqual, "<=".to_string())
+                } else {
+                    self.add_token(TokenType::Greater, "<".to_string())
+                };
+            }
             _ => unimplemented!(),
         };
     }
@@ -68,6 +96,19 @@ impl Scanner {
             lexeme: String::new(),
             line: self.line,
         })
+    }
+
+    fn matches(&mut self, c: char) -> bool {
+        if self.is_at_end() {
+            return false;
+        }
+
+        if self.source[self.current] != c {
+            return false;
+        }
+
+        self.current += 1;
+        true
     }
 
     fn is_at_end(&self) -> bool {
@@ -169,6 +210,80 @@ mod tests {
                 token, *exp_token,
                 "tokens[{idx}] - got={}, expected={}",
                 token.ty, exp_token.ty,
+            );
+        }
+    }
+
+    #[test]
+    fn test_conditional_char_token() {
+        let input = "!!=<<=>>====";
+
+        let expected = vec![
+            Token {
+                ty: TokenType::Bang,
+                literal: "!".to_string(),
+                lexeme: String::new(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::BangEqual,
+                literal: "!=".to_string(),
+                lexeme: String::new(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Less,
+                literal: "<".to_string(),
+                lexeme: String::new(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::LessEqual,
+                literal: "<=".to_string(),
+                lexeme: String::new(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Greater,
+                literal: ">".to_string(),
+                lexeme: String::new(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::GreaterEqual,
+                literal: ">=".to_string(),
+                lexeme: String::new(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::EqualEqual,
+                literal: "==".to_string(),
+                lexeme: String::new(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Equal,
+                literal: "=".to_string(),
+                lexeme: String::new(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Eof,
+                literal: "".to_string(),
+                lexeme: String::new(),
+                line: 1,
+            },
+        ];
+
+        let mut scanner = Scanner::new();
+        scanner.scan_tokens(input);
+
+        for (idx, token) in scanner.tokens.into_iter().enumerate() {
+            let exp_token = &expected[idx];
+            assert_eq!(
+                token.ty, exp_token.ty,
+                "tokens[{idx}], got={}, expecte={}",
+                token.ty, exp_token.ty
             );
         }
     }
