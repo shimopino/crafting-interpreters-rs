@@ -1,10 +1,12 @@
+#[derive(PartialEq, Debug)]
 pub struct Token {
-    ty: TokenType,
-    lexeme: String,
-    literal: String,
-    line: u64,
+    pub ty: TokenType,
+    pub lexeme: String,
+    pub literal: String,
+    pub line: usize,
 }
 
+#[derive(PartialEq, Debug)]
 pub enum TokenType {
     // 記号1個のトークン
     LParan,
