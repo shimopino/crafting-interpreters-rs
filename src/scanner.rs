@@ -15,6 +15,12 @@ pub struct Scanner {
     pub line: usize,
 }
 
+impl Default for Scanner {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Scanner {
     pub fn new() -> Self {
         Scanner {
@@ -87,10 +93,9 @@ impl Scanner {
                     self.add_token(TokenType::Greater, "<".to_string())
                 };
             }
-            ' ' | '\r' | '\t' => return,
+            ' ' | '\r' | '\t' => (),
             '\n' => {
                 self.line += 1;
-                return;
             }
             _ => unimplemented!(),
         };
@@ -99,7 +104,7 @@ impl Scanner {
     fn advance(&mut self) -> char {
         let c = self.source[self.current];
         self.current += 1;
-        return c;
+        c
     }
 
     fn add_token(&mut self, ty: TokenType, literal: String) {
@@ -128,7 +133,8 @@ impl Scanner {
         if self.is_at_end() {
             return '\0';
         }
-        return self.source[self.current];
+
+        self.source[self.current]
     }
 
     fn is_at_end(&self) -> bool {
