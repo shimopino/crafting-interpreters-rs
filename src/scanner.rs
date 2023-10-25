@@ -294,7 +294,7 @@ mod tests {
             },
             Token {
                 ty: TokenType::Equal,
-                literal: "aa".to_string(),
+                literal: "=".to_string(),
                 lexeme: String::new(),
                 line: 1,
             },
