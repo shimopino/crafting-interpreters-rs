@@ -396,6 +396,9 @@ mod tests {
     fn test_string_literal() {
         let input = r#"
         "string_value"
+
+        "string
+value"
         "#;
 
         let expected = vec![
@@ -404,6 +407,12 @@ mod tests {
                 literal: "string_value".to_string(),
                 lexeme: String::new(),
                 line: 1,
+            },
+            Token {
+                ty: TokenType::String,
+                literal: "string\nvalue".to_string(),
+                lexeme: String::new(),
+                line: 2,
             },
             Token {
                 ty: TokenType::Eof,
