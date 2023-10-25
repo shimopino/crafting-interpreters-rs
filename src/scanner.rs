@@ -88,9 +88,9 @@ impl Scanner {
             }
             '>' => {
                 if self.matches('=') {
-                    self.add_token(TokenType::GreaterEqual, "<=".to_string())
+                    self.add_token(TokenType::GreaterEqual, ">=".to_string())
                 } else {
-                    self.add_token(TokenType::Greater, "<".to_string())
+                    self.add_token(TokenType::Greater, ">".to_string())
                 };
             }
             ' ' | '\r' | '\t' => (),
@@ -233,9 +233,14 @@ mod tests {
         for (idx, token) in scanner.tokens.into_iter().enumerate() {
             let exp_token = &expected[idx];
             assert_eq!(
-                token, *exp_token,
-                "tokens[{idx}] - got={}, expected={}",
                 token.ty, exp_token.ty,
+                "tokens[{idx}] ty - got={}, expected={}",
+                token.ty, exp_token.ty,
+            );
+            assert_eq!(
+                token.literal, exp_token.literal,
+                "tokens[{idx}] literal - got={}, expected={}",
+                token.literal, exp_token.literal
             );
         }
     }
@@ -289,7 +294,7 @@ mod tests {
             },
             Token {
                 ty: TokenType::Equal,
-                literal: "=".to_string(),
+                literal: "aa".to_string(),
                 lexeme: String::new(),
                 line: 1,
             },
@@ -308,8 +313,13 @@ mod tests {
             let exp_token = &expected[idx];
             assert_eq!(
                 token.ty, exp_token.ty,
-                "tokens[{idx}], got={}, expecte={}",
-                token.ty, exp_token.ty
+                "tokens[{idx}] ty - got={}, expected={}",
+                token.ty, exp_token.ty,
+            );
+            assert_eq!(
+                token.literal, exp_token.literal,
+                "tokens[{idx}] literal - got={}, expected={}",
+                token.literal, exp_token.literal
             );
         }
     }
@@ -350,8 +360,13 @@ mod tests {
             let exp_token = &expected[idx];
             assert_eq!(
                 token.ty, exp_token.ty,
-                "tokens[{idx}], got={}, expecte={}",
-                token.ty, exp_token.ty
+                "tokens[{idx}] ty - got={}, expected={}",
+                token.ty, exp_token.ty,
+            );
+            assert_eq!(
+                token.literal, exp_token.literal,
+                "tokens[{idx}] literal - got={}, expected={}",
+                token.literal, exp_token.literal
             );
         }
     }
