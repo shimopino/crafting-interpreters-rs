@@ -97,6 +97,7 @@ impl Scanner {
             '\n' => {
                 self.line += 1;
             }
+            '"' => self.string(),
             _ => unimplemented!(),
         };
     }
@@ -139,6 +140,26 @@ impl Scanner {
 
     fn is_at_end(&self) -> bool {
         self.current >= self.source.len()
+    }
+
+    fn string(&mut self) {
+        while self.peek() != '"' && !self.is_at_end() {
+            if self.peek() == '\n' {
+                self.line += 1;
+            }
+            self.advance();
+        }
+
+        if self.is_at_end() {
+            return;
+        }
+
+        self.advance();
+
+        let value = self.source[self.start + 1..self.current - 1]
+            .iter()
+            .collect();
+        self.add_token(TokenType::String, value);
     }
 }
 
@@ -342,6 +363,45 @@ mod tests {
             Token {
                 ty: TokenType::RParan,
                 literal: ")".to_string(),
+                lexeme: String::new(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Eof,
+                literal: "".to_string(),
+                lexeme: String::new(),
+                line: 1,
+            },
+        ];
+
+        let mut scanner = Scanner::new();
+        scanner.scan_tokens(input);
+
+        for (idx, token) in scanner.tokens.into_iter().enumerate() {
+            let exp_token = &expected[idx];
+            assert_eq!(
+                token.ty, exp_token.ty,
+                "tokens[{idx}] ty - got={}, expected={}",
+                token.ty, exp_token.ty,
+            );
+            assert_eq!(
+                token.literal, exp_token.literal,
+                "tokens[{idx}] literal - got={}, expected={}",
+                token.literal, exp_token.literal
+            );
+        }
+    }
+
+    #[test]
+    fn test_string_literal() {
+        let input = r#"
+        "string_value"
+        "#;
+
+        let expected = vec![
+            Token {
+                ty: TokenType::String,
+                literal: "string_value".to_string(),
                 lexeme: String::new(),
                 line: 1,
             },
