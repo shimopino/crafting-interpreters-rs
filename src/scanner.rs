@@ -545,13 +545,145 @@ value"
 
     #[test]
     fn test_keywords() {
-        let input = r#"and"#;
+        let input = r#"and;
+        var five = 5;
+
+        var fn = fun(x, y) {
+            return x + y
+        }        
+        "#;
 
         let expected = vec![
             Token {
                 ty: TokenType::And,
                 lexeme: String::new(),
                 literal: "and".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::SemiColon,
+                lexeme: String::new(),
+                literal: ";".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Var,
+                lexeme: String::new(),
+                literal: "var".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Identifier,
+                lexeme: String::new(),
+                literal: "five".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Equal,
+                lexeme: String::new(),
+                literal: "=".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Number,
+                lexeme: String::new(),
+                literal: "5".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::SemiColon,
+                lexeme: String::new(),
+                literal: ";".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Var,
+                lexeme: String::new(),
+                literal: "var".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Identifier,
+                lexeme: String::new(),
+                literal: "fn".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Equal,
+                lexeme: String::new(),
+                literal: "=".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Fun,
+                lexeme: String::new(),
+                literal: "fun".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::LParan,
+                lexeme: String::new(),
+                literal: "(".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Identifier,
+                lexeme: String::new(),
+                literal: "x".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Comma,
+                lexeme: String::new(),
+                literal: ",".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Identifier,
+                lexeme: String::new(),
+                literal: "y".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::RParan,
+                lexeme: String::new(),
+                literal: ")".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::LBrace,
+                lexeme: String::new(),
+                literal: "{".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Return,
+                lexeme: String::new(),
+                literal: "return".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Identifier,
+                lexeme: String::new(),
+                literal: "x".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Plus,
+                lexeme: String::new(),
+                literal: "+".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Identifier,
+                lexeme: String::new(),
+                literal: "y".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::RBrace,
+                lexeme: String::new(),
+                literal: "}".to_string(),
                 line: 1,
             },
             Token {
