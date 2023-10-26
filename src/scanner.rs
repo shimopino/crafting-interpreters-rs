@@ -98,6 +98,7 @@ impl Scanner {
                 self.line += 1;
             }
             '"' => self.string(),
+            '0'..='9' => self.number(),
             _ => unimplemented!(),
         };
     }
@@ -160,6 +161,33 @@ impl Scanner {
             .iter()
             .collect();
         self.add_token(TokenType::String, value);
+    }
+
+    fn number(&mut self) {
+        while self.is_digit(self.peek()) {
+            self.advance();
+        }
+
+        if self.peek() == '.' && self.is_digit(self.peek_next()) {
+            self.advance();
+            while self.is_digit(self.peek()) {
+                self.advance();
+            }
+        }
+
+        let value = self.source[self.start..self.current].iter().collect();
+        self.add_token(TokenType::Number, value);
+    }
+
+    fn is_digit(&self, c: char) -> bool {
+        c.is_ascii_digit()
+    }
+
+    fn peek_next(&self) -> char {
+        if self.current + 1 >= self.source.len() {
+            return '\0';
+        }
+        self.source[self.current + 1]
     }
 }
 
@@ -418,6 +446,55 @@ value"
                 ty: TokenType::Eof,
                 literal: "".to_string(),
                 lexeme: String::new(),
+                line: 1,
+            },
+        ];
+
+        let mut scanner = Scanner::new();
+        scanner.scan_tokens(input);
+
+        for (idx, token) in scanner.tokens.into_iter().enumerate() {
+            let exp_token = &expected[idx];
+            assert_eq!(
+                token.ty, exp_token.ty,
+                "tokens[{idx}] ty - got={}, expected={}",
+                token.ty, exp_token.ty,
+            );
+            assert_eq!(
+                token.literal, exp_token.literal,
+                "tokens[{idx}] literal - got={}, expected={}",
+                token.literal, exp_token.literal
+            );
+        }
+    }
+
+    #[test]
+    fn test_number_literal() {
+        let input = "123;123.123";
+
+        let expected = vec![
+            Token {
+                ty: TokenType::Number,
+                lexeme: String::new(),
+                literal: "123".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::SemiColon,
+                lexeme: String::new(),
+                literal: ";".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Number,
+                lexeme: String::new(),
+                literal: "123.123".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Eof,
+                lexeme: String::new(),
+                literal: "".to_string(),
                 line: 1,
             },
         ];
