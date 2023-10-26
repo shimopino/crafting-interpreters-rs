@@ -1,4 +1,4 @@
-use crate::token::{Token, TokenType};
+use crate::token::{match_keywords, Token, TokenType};
 
 /// `Scanner`は、入力された文字列をトークンの配列に解析するための構造体
 pub struct Scanner {
@@ -99,7 +99,13 @@ impl Scanner {
             }
             '"' => self.string(),
             '0'..='9' => self.number(),
-            _ => unimplemented!(),
+            _ => {
+                if self.is_alpha(c) {
+                    self.identifier();
+                } else {
+                    todo!()
+                }
+            }
         };
     }
 
@@ -179,8 +185,28 @@ impl Scanner {
         self.add_token(TokenType::Number, value);
     }
 
+    fn identifier(&mut self) {
+        while self.is_alpha_numeric(self.peek()) {
+            self.advance();
+        }
+
+        let text = self.source[self.start..self.current]
+            .iter()
+            .collect::<String>();
+        let ty = match_keywords(&text);
+        self.add_token(ty, text);
+    }
+
     fn is_digit(&self, c: char) -> bool {
         c.is_ascii_digit()
+    }
+
+    fn is_alpha(&self, c: char) -> bool {
+        c.is_ascii_alphabetic()
+    }
+
+    fn is_alpha_numeric(&self, c: char) -> bool {
+        self.is_alpha(c) || self.is_digit(c)
     }
 
     fn peek_next(&self) -> char {
@@ -489,6 +515,43 @@ value"
                 ty: TokenType::Number,
                 lexeme: String::new(),
                 literal: "123.123".to_string(),
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Eof,
+                lexeme: String::new(),
+                literal: "".to_string(),
+                line: 1,
+            },
+        ];
+
+        let mut scanner = Scanner::new();
+        scanner.scan_tokens(input);
+
+        for (idx, token) in scanner.tokens.into_iter().enumerate() {
+            let exp_token = &expected[idx];
+            assert_eq!(
+                token.ty, exp_token.ty,
+                "tokens[{idx}] ty - got={}, expected={}",
+                token.ty, exp_token.ty,
+            );
+            assert_eq!(
+                token.literal, exp_token.literal,
+                "tokens[{idx}] literal - got={}, expected={}",
+                token.literal, exp_token.literal
+            );
+        }
+    }
+
+    #[test]
+    fn test_keywords() {
+        let input = r#"and"#;
+
+        let expected = vec![
+            Token {
+                ty: TokenType::And,
+                lexeme: String::new(),
+                literal: "and".to_string(),
                 line: 1,
             },
             Token {

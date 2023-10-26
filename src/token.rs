@@ -52,6 +52,7 @@ pub enum TokenType {
     Super,
     This,
     Var,
+    Print,
 
     // End of file
     Eof,
@@ -100,8 +101,31 @@ impl std::fmt::Display for TokenType {
             This => "this",
             Var => "var",
             Eof => "eof",
+            Print => "print",
         };
 
         write!(f, "{matching_literal}")
+    }
+}
+
+pub fn match_keywords(literal: &str) -> TokenType {
+    match literal {
+        "and" => TokenType::And,
+        "class" => TokenType::Class,
+        "else" => TokenType::Else,
+        "false" => TokenType::False,
+        "for" => TokenType::For,
+        "fun" => TokenType::Fun,
+        "if" => TokenType::If,
+        "nil" => TokenType::Nil,
+        "or" => TokenType::Or,
+        "print" => TokenType::Print,
+        "return" => TokenType::Return,
+        "super" => TokenType::Super,
+        "this" => TokenType::This,
+        "true" => TokenType::True,
+        "var" => TokenType::Var,
+        "while" => TokenType::While,
+        _ => TokenType::Identifier,
     }
 }
