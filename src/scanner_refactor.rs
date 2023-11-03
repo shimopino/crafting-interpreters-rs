@@ -68,6 +68,27 @@ impl Scanner {
                     self.create_token(TokenType::Bang)
                 }
             }
+            '=' => {
+                if self.matches('=') {
+                    self.create_token(TokenType::EqualEqual)
+                } else {
+                    self.create_token(TokenType::Equal)
+                }
+            }
+            '>' => {
+                if self.matches('=') {
+                    self.create_token(TokenType::GreaterEqual)
+                } else {
+                    self.create_token(TokenType::Greater)
+                }
+            }
+            '<' => {
+                if self.matches('=') {
+                    self.create_token(TokenType::LessEqual)
+                } else {
+                    self.create_token(TokenType::Less)
+                }
+            }
             _ => return Err(String::from("invalid token")),
         };
 
@@ -199,7 +220,7 @@ mod tests {
 
     #[test]
     fn test_conditional_char_token() {
-        let input = "!!====";
+        let input = "!!====>>=<<=";
 
         let expected = vec![
             Token {
@@ -223,6 +244,30 @@ mod tests {
             Token {
                 ty: TokenType::Equal,
                 lexeme: vec!['='],
+                literal: None,
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Greater,
+                lexeme: vec!['>'],
+                literal: None,
+                line: 1,
+            },
+            Token {
+                ty: TokenType::GreaterEqual,
+                lexeme: vec!['>', '='],
+                literal: None,
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Less,
+                lexeme: vec!['<'],
+                literal: None,
+                line: 1,
+            },
+            Token {
+                ty: TokenType::LessEqual,
+                lexeme: vec!['<', '='],
                 literal: None,
                 line: 1,
             },
