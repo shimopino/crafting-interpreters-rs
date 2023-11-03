@@ -1,16 +1,9 @@
 #[derive(PartialEq, Debug)]
 pub struct Token {
     pub ty: TokenType,
-    pub lexeme: Vec<char>,
-    pub literal: Option<Literal>,
+    pub lexeme: String,
+    pub literal: String,
     pub line: usize,
-}
-
-#[derive(PartialEq, Debug)]
-pub enum Literal {
-    Identifier(String),
-    Str(String),
-    Number(f64),
 }
 
 #[derive(PartialEq, Debug)]
