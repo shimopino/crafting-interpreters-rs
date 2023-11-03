@@ -154,7 +154,11 @@ impl Scanner {
 
 #[cfg(test)]
 mod tests {
-    use crate::{scanner_refactor::scan_tokens, token_refactor::Token, token_refactor::TokenType};
+    use crate::{
+        scanner_refactor::scan_tokens,
+        token_refactor::TokenType,
+        token_refactor::{Literal, Token},
+    };
 
     #[test]
     fn test_one_char_token() {
@@ -352,6 +356,49 @@ mod tests {
                 lexeme: vec![],
                 literal: None,
                 line: 5,
+            },
+        ];
+
+        let tokens = scan_tokens(input).expect("スキャンに失敗しました。");
+        assert_eq!(
+            expected.len(),
+            tokens.len(),
+            "トークンの数が期待と異なります。"
+        );
+
+        for (expected_token, actual_token) in expected.into_iter().zip(tokens.into_iter()) {
+            assert_eq!(
+                expected_token, actual_token,
+                "期待するトークンと実際のトークンが異なります。"
+            );
+        }
+    }
+
+    #[test]
+    fn test_string_number_literal() {
+        let input = r#"
+        "hello_world"
+        0.14
+        "#;
+
+        let expected = vec![
+            Token {
+                ty: TokenType::String,
+                lexeme: vec!['h', 'e', 'l', 'l', 'o', '_', 'w', 'o', 'r', 'l', 'd'],
+                literal: Some(Literal::Str("hello_world".to_string())),
+                line: 2,
+            },
+            Token {
+                ty: TokenType::String,
+                lexeme: vec!['0', '.', '1', '4'],
+                literal: Some(Literal::Number(0.14)),
+                line: 3,
+            },
+            Token {
+                ty: TokenType::Eof,
+                lexeme: vec![],
+                literal: None,
+                line: 4,
             },
         ];
 
