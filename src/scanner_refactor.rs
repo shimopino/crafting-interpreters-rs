@@ -215,14 +215,14 @@ mod tests {
                 line: 1,
             },
             Token {
-                ty: TokenType::Equal,
-                lexeme: vec!['='],
+                ty: TokenType::EqualEqual,
+                lexeme: vec!['=', '='],
                 literal: None,
                 line: 1,
             },
             Token {
-                ty: TokenType::EqualEqual,
-                lexeme: vec!['=', '='],
+                ty: TokenType::Equal,
+                lexeme: vec!['='],
                 literal: None,
                 line: 1,
             },
