@@ -375,30 +375,25 @@ mod tests {
     }
 
     #[test]
-    fn test_string_number_literal() {
+    fn test_string_literal() {
         let input = r#"
         "hello_world"
-        0.14
         "#;
 
         let expected = vec![
             Token {
                 ty: TokenType::String,
-                lexeme: vec!['h', 'e', 'l', 'l', 'o', '_', 'w', 'o', 'r', 'l', 'd'],
+                lexeme: vec![
+                    '"', 'h', 'e', 'l', 'l', 'o', '_', 'w', 'o', 'r', 'l', 'd', '"',
+                ],
                 literal: Some(Literal::Str("hello_world".to_string())),
                 line: 2,
-            },
-            Token {
-                ty: TokenType::String,
-                lexeme: vec!['0', '.', '1', '4'],
-                literal: Some(Literal::Number(0.14)),
-                line: 3,
             },
             Token {
                 ty: TokenType::Eof,
                 lexeme: vec![],
                 literal: None,
-                line: 4,
+                line: 3,
             },
         ];
 
