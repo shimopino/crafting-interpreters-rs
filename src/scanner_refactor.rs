@@ -174,4 +174,38 @@ mod tests {
         let result = scan_tokens(input);
         assert_eq!(Ok(expected), result);
     }
+
+    #[test]
+    fn test_conditional_char_token() {
+        let input = "!!=";
+
+        let expected = vec![
+            Token {
+                ty: TokenType::Bang,
+                lexeme: vec!['!'],
+                literal: None,
+                line: 1,
+            },
+            Token {
+                ty: TokenType::BangEqual,
+                lexeme: vec!['!', '='],
+                literal: None,
+                line: 1,
+            },
+        ];
+
+        let tokens = scan_tokens(input).expect("スキャンに失敗しました。");
+        assert_eq!(
+            expected.len(),
+            tokens.len(),
+            "トークンの数が期待と異なります。"
+        );
+
+        for (expected_token, actual_token) in expected.into_iter().zip(tokens.into_iter()) {
+            assert_eq!(
+                expected_token, actual_token,
+                "期待するトークンと実際のトークンが異なります。"
+            );
+        }
+    }
 }
