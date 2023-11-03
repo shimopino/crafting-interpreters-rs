@@ -167,6 +167,14 @@ impl Scanner {
         }
     }
 
+    fn peek_next(&self) -> char {
+        if self.current + 1 >= self.source.len() {
+            return '\0';
+        }
+
+        self.source[self.current + 1]
+    }
+
     fn string(&mut self) -> Result<(), String> {
         while self.peek() != '"' && !self.is_at_end() {
             if self.peek() == '\n' {
@@ -190,8 +198,26 @@ impl Scanner {
         Ok(())
     }
 
-    fn number(&self) -> Result<(), String> {
-        todo!()
+    fn number(&mut self) -> Result<(), String> {
+        while is_digit(self.peek()) {
+            self.advance();
+        }
+
+        if self.peek() == '.' && is_digit(self.peek_next()) {
+            self.advance();
+            while is_digit(self.peek()) {
+                self.advance();
+            }
+        }
+
+        let value = self.source[self.start..self.current]
+            .iter()
+            .collect::<String>()
+            .parse()
+            .map_err(|err| format!("invalid number: {err}"))?;
+        self.add_literal_token(TokenType::Number, Literal::Number(value));
+
+        Ok(())
     }
 }
 
