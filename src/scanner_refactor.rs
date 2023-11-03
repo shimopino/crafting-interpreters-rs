@@ -458,4 +458,40 @@ mod tests {
             );
         }
     }
+
+    #[test]
+    fn test_number_literal() {
+        let input = r#"
+        0.145
+        "#;
+
+        let expected = vec![
+            Token {
+                ty: TokenType::Number,
+                lexeme: vec!['0', '.', '1', '4', '5'],
+                literal: Some(Literal::Number(0.145)),
+                line: 2,
+            },
+            Token {
+                ty: TokenType::Eof,
+                lexeme: vec![],
+                literal: None,
+                line: 3,
+            },
+        ];
+
+        let tokens = scan_tokens(input).expect("スキャンに失敗しました。");
+        assert_eq!(
+            expected.len(),
+            tokens.len(),
+            "トークンの数が期待と異なります。"
+        );
+
+        for (expected_token, actual_token) in expected.into_iter().zip(tokens.into_iter()) {
+            assert_eq!(
+                expected_token, actual_token,
+                "期待するトークンと実際のトークンが異なります。"
+            );
+        }
+    }
 }
