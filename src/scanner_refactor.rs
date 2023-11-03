@@ -61,6 +61,13 @@ impl Scanner {
             ';' => self.create_token(TokenType::SemiColon),
             '/' => self.create_token(TokenType::Slash),
             '*' => self.create_token(TokenType::Star),
+            '!' => {
+                if self.matches('=') {
+                    self.create_token(TokenType::BangEqual)
+                } else {
+                    self.create_token(TokenType::Bang)
+                }
+            }
             _ => return Err(String::from("invalid token")),
         };
 
@@ -85,6 +92,21 @@ impl Scanner {
             literal: None,
             line: self.line,
         }
+    }
+
+    /// 次の文字が期待したものであった場合に `true`` を返却し、文字を消費する
+    /// 期待したものではなかった場合は、文字を消費しない
+    fn matches(&mut self, c: char) -> bool {
+        if self.is_at_end() {
+            return false;
+        }
+
+        if self.source[self.current] != c {
+            return false;
+        }
+
+        self.current += 1;
+        true
     }
 }
 
@@ -189,6 +211,12 @@ mod tests {
             Token {
                 ty: TokenType::BangEqual,
                 lexeme: vec!['!', '='],
+                literal: None,
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Eof,
+                lexeme: vec![],
                 literal: None,
                 line: 1,
             },
