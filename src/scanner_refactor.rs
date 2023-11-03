@@ -38,6 +38,12 @@ impl Scanner {
             tokens.push(token)
         }
 
+        tokens.push(Token {
+            ty: TokenType::Eof,
+            lexeme: vec![],
+            literal: None,
+            line: self.line,
+        });
         Ok(tokens)
     }
 
@@ -45,6 +51,16 @@ impl Scanner {
         let c = self.advance();
         let token = match c {
             '{' => self.create_token(TokenType::LBrace),
+            '}' => self.create_token(TokenType::RBrace),
+            '(' => self.create_token(TokenType::LParan),
+            ')' => self.create_token(TokenType::RParan),
+            ',' => self.create_token(TokenType::Comma),
+            '.' => self.create_token(TokenType::Dot),
+            '-' => self.create_token(TokenType::Minus),
+            '+' => self.create_token(TokenType::Plus),
+            ';' => self.create_token(TokenType::SemiColon),
+            '/' => self.create_token(TokenType::Slash),
+            '*' => self.create_token(TokenType::Star),
             _ => return Err(String::from("invalid token")),
         };
 
@@ -78,15 +94,82 @@ mod tests {
 
     #[test]
     fn test_one_char_token() {
-        let input = "{";
-        // let input = "{}(),.-+;/*";
+        let input = "{}(),.-+;/*";
 
-        let expected = vec![Token {
-            ty: TokenType::LBrace,
-            lexeme: vec!['{'],
-            literal: None,
-            line: 1,
-        }];
+        let expected = vec![
+            Token {
+                ty: TokenType::LBrace,
+                lexeme: vec!['{'],
+                literal: None,
+                line: 1,
+            },
+            Token {
+                ty: TokenType::RBrace,
+                lexeme: vec!['}'],
+                literal: None,
+                line: 1,
+            },
+            Token {
+                ty: TokenType::LParan,
+                lexeme: vec!['('],
+                literal: None,
+                line: 1,
+            },
+            Token {
+                ty: TokenType::RParan,
+                lexeme: vec![')'],
+                literal: None,
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Comma,
+                lexeme: vec![','],
+                literal: None,
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Dot,
+                lexeme: vec!['.'],
+                literal: None,
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Minus,
+                lexeme: vec!['-'],
+                literal: None,
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Plus,
+                lexeme: vec!['+'],
+                literal: None,
+                line: 1,
+            },
+            Token {
+                ty: TokenType::SemiColon,
+                lexeme: vec![';'],
+                literal: None,
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Slash,
+                lexeme: vec!['/'],
+                literal: None,
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Star,
+                lexeme: vec!['*'],
+                literal: None,
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Eof,
+                lexeme: vec![],
+                literal: None,
+                line: 1,
+            },
+        ];
 
         let result = scan_tokens(input);
         assert_eq!(Ok(expected), result);
