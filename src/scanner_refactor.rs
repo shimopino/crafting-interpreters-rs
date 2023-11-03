@@ -214,8 +214,19 @@ mod tests {
             },
         ];
 
-        let result = scan_tokens(input);
-        assert_eq!(Ok(expected), result);
+        let tokens = scan_tokens(input).expect("スキャンに失敗しました。");
+        assert_eq!(
+            expected.len(),
+            tokens.len(),
+            "トークンの数が期待と異なります。"
+        );
+
+        for (expected_token, actual_token) in expected.into_iter().zip(tokens.into_iter()) {
+            assert_eq!(
+                expected_token, actual_token,
+                "期待するトークンと実際のトークンが異なります。"
+            );
+        }
     }
 
     #[test]
