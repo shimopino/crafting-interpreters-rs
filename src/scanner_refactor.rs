@@ -1,7 +1,7 @@
 use crate::token_refactor::Token;
 
 /// `Scanner`は、入力された文字列をトークンの配列に解析するための構造体
-pub struct Scanner {
+struct Scanner {
     /// 入力文字列を保持する
     /// マルチバイトのUTF-8文字も安全に取り扱えるように char 型として保持する
     pub source: Vec<char>,
@@ -14,17 +14,39 @@ pub struct Scanner {
 }
 
 pub fn scan_tokens(input: &str) -> Result<Vec<Token>, String> {
-    todo!()
+    let mut scanner = Scanner::new(input);
+    let tokens = scanner.scan_tokens()?;
+    Ok(tokens)
 }
 
 impl Scanner {
-    fn new() -> Self {
+    fn new(input: &str) -> Self {
         Scanner {
-            source: vec![],
+            source: input.chars().collect(),
             start: 0,
             current: 0,
-            line: 0,
+            line: 1,
         }
+    }
+
+    fn scan_tokens(&mut self) -> Result<Vec<Token>, String> {
+        let mut tokens = vec![];
+
+        while !self.is_at_end() {
+            self.start = self.current;
+            let token = self.scan_token()?;
+            tokens.push(token)
+        }
+
+        Ok(tokens)
+    }
+
+    fn scan_token(&mut self) -> Result<Token, String> {
+        todo!()
+    }
+
+    fn is_at_end(&self) -> bool {
+        todo!()
     }
 }
 
@@ -41,7 +63,7 @@ mod tests {
             ty: TokenType::LBrace,
             lexeme: vec!['{'],
             literal: None,
-            line: 0,
+            line: 1,
         }];
 
         let result = scan_tokens(input);
