@@ -5,6 +5,8 @@ struct Scanner {
     /// 入力文字列を保持する
     /// マルチバイトのUTF-8文字も安全に取り扱えるように char 型として保持する
     pub source: Vec<char>,
+    /// 字句解析した結果のトークンを保持する
+    pub tokens: Vec<Token>,
     /// スキャン中のトークンの最初の文字の位置を指す
     pub start: usize,
     /// スキャン中に注目している文字を指す
@@ -15,84 +17,95 @@ struct Scanner {
 
 pub fn scan_tokens(input: &str) -> Result<Vec<Token>, String> {
     let mut scanner = Scanner::new(input);
-    let tokens = scanner.scan_tokens()?;
-    Ok(tokens)
+    scanner.scan_tokens()?;
+    Ok(scanner.tokens)
 }
 
 impl Scanner {
     fn new(input: &str) -> Self {
         Scanner {
             source: input.chars().collect(),
+            tokens: vec![],
             start: 0,
             current: 0,
             line: 1,
         }
     }
 
-    fn scan_tokens(&mut self) -> Result<Vec<Token>, String> {
-        let mut tokens = vec![];
-
+    fn scan_tokens(&mut self) -> Result<(), String> {
         while !self.is_at_end() {
             self.start = self.current;
-            let token = self.scan_token()?;
-            tokens.push(token)
+            self.scan_token()?;
         }
 
-        tokens.push(Token {
+        self.tokens.push(Token {
             ty: TokenType::Eof,
             lexeme: vec![],
             literal: None,
             line: self.line,
         });
-        Ok(tokens)
+
+        Ok(())
     }
 
-    fn scan_token(&mut self) -> Result<Token, String> {
+    fn scan_token(&mut self) -> Result<(), String> {
         let c = self.advance();
-        let token = match c {
-            '{' => self.create_token(TokenType::LBrace),
-            '}' => self.create_token(TokenType::RBrace),
-            '(' => self.create_token(TokenType::LParan),
-            ')' => self.create_token(TokenType::RParan),
-            ',' => self.create_token(TokenType::Comma),
-            '.' => self.create_token(TokenType::Dot),
-            '-' => self.create_token(TokenType::Minus),
-            '+' => self.create_token(TokenType::Plus),
-            ';' => self.create_token(TokenType::SemiColon),
-            '/' => self.create_token(TokenType::Slash),
-            '*' => self.create_token(TokenType::Star),
+        match c {
+            '{' => self.add_token(TokenType::LBrace),
+            '}' => self.add_token(TokenType::RBrace),
+            '(' => self.add_token(TokenType::LParan),
+            ')' => self.add_token(TokenType::RParan),
+            ',' => self.add_token(TokenType::Comma),
+            '.' => self.add_token(TokenType::Dot),
+            '-' => self.add_token(TokenType::Minus),
+            '+' => self.add_token(TokenType::Plus),
+            ';' => self.add_token(TokenType::SemiColon),
+            '/' => {
+                if self.matches('/') {
+                    while self.peek() != '\n' && !self.is_at_end() {
+                        self.advance();
+                    }
+                } else {
+                    self.add_token(TokenType::Slash)
+                }
+            }
+            '*' => self.add_token(TokenType::Star),
             '!' => {
                 if self.matches('=') {
-                    self.create_token(TokenType::BangEqual)
+                    self.add_token(TokenType::BangEqual)
                 } else {
-                    self.create_token(TokenType::Bang)
+                    self.add_token(TokenType::Bang)
                 }
             }
             '=' => {
                 if self.matches('=') {
-                    self.create_token(TokenType::EqualEqual)
+                    self.add_token(TokenType::EqualEqual)
                 } else {
-                    self.create_token(TokenType::Equal)
+                    self.add_token(TokenType::Equal)
                 }
             }
             '>' => {
                 if self.matches('=') {
-                    self.create_token(TokenType::GreaterEqual)
+                    self.add_token(TokenType::GreaterEqual)
                 } else {
-                    self.create_token(TokenType::Greater)
+                    self.add_token(TokenType::Greater)
                 }
             }
             '<' => {
                 if self.matches('=') {
-                    self.create_token(TokenType::LessEqual)
+                    self.add_token(TokenType::LessEqual)
                 } else {
-                    self.create_token(TokenType::Less)
+                    self.add_token(TokenType::Less)
                 }
             }
-            _ => return Err(String::from("invalid token")),
+            ' ' | '\t' | '\r' => {}
+            '\n' => {
+                self.line += 1;
+            }
+            _ => return Err(String::from(format!("invalid token: {c}"))),
         };
 
-        Ok(token)
+        Ok(())
     }
 
     fn advance(&mut self) -> char {
@@ -106,13 +119,13 @@ impl Scanner {
         self.current >= self.source.len()
     }
 
-    fn create_token(&self, ty: TokenType) -> Token {
-        Token {
+    fn add_token(&mut self, ty: TokenType) -> () {
+        self.tokens.push(Token {
             ty,
             lexeme: self.source[self.start..self.current].to_vec(),
             literal: None,
             line: self.line,
-        }
+        })
     }
 
     /// 次の文字が期待したものであった場合に `true`` を返却し、文字を消費する
@@ -128,6 +141,14 @@ impl Scanner {
 
         self.current += 1;
         true
+    }
+
+    fn peek(&self) -> char {
+        if self.is_at_end() {
+            '\0'
+        } else {
+            self.source[self.current]
+        }
     }
 }
 
