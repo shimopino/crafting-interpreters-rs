@@ -1,4 +1,4 @@
-use crate::token_refactor::{Token, TokenType};
+use crate::token_refactor::{Literal, Token, TokenType};
 
 /// `Scanner`は、入力された文字列をトークンの配列に解析するための構造体
 struct Scanner {
@@ -102,7 +102,14 @@ impl Scanner {
             '\n' => {
                 self.line += 1;
             }
-            _ => return Err(String::from(format!("invalid token: {c}"))),
+            '"' => self.string()?,
+            _ => {
+                if is_digit(c) {
+                    self.number()?;
+                } else {
+                    return Err(String::from(format!("invalid token: {c}")));
+                }
+            }
         };
 
         Ok(())
@@ -124,6 +131,15 @@ impl Scanner {
             ty,
             lexeme: self.source[self.start..self.current].to_vec(),
             literal: None,
+            line: self.line,
+        })
+    }
+
+    fn add_literal_token(&mut self, ty: TokenType, literal: Literal) -> () {
+        self.tokens.push(Token {
+            ty,
+            lexeme: self.source[self.start..self.current].to_vec(),
+            literal: Some(literal),
             line: self.line,
         })
     }
@@ -150,6 +166,37 @@ impl Scanner {
             self.source[self.current]
         }
     }
+
+    fn string(&mut self) -> Result<(), String> {
+        while self.peek() != '"' && !self.is_at_end() {
+            if self.peek() == '\n' {
+                self.line += 1;
+            }
+            self.advance();
+        }
+
+        if self.is_at_end() {
+            return Err(String::from("Unterminated string"));
+        }
+
+        self.advance();
+
+        // "..." のうち最初と最後のダブルクォートを無視して、中身の文字列のみ抽出する
+        let literal = self.source[self.start + 1..self.current - 1]
+            .iter()
+            .collect::<String>();
+        self.add_literal_token(TokenType::String, Literal::Str(literal));
+
+        Ok(())
+    }
+
+    fn number(&self) -> Result<(), String> {
+        todo!()
+    }
+}
+
+fn is_digit(c: char) -> bool {
+    c.is_ascii_digit()
 }
 
 #[cfg(test)]
