@@ -330,7 +330,7 @@ mod tests {
                 ty: TokenType::Eof,
                 lexeme: vec![],
                 literal: None,
-                line: 4,
+                line: 5,
             },
         ];
 
