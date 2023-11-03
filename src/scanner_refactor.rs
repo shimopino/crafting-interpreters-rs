@@ -199,7 +199,7 @@ mod tests {
 
     #[test]
     fn test_conditional_char_token() {
-        let input = "!!=";
+        let input = "!!====";
 
         let expected = vec![
             Token {
@@ -211,6 +211,18 @@ mod tests {
             Token {
                 ty: TokenType::BangEqual,
                 lexeme: vec!['!', '='],
+                literal: None,
+                line: 1,
+            },
+            Token {
+                ty: TokenType::Equal,
+                lexeme: vec!['='],
+                literal: None,
+                line: 1,
+            },
+            Token {
+                ty: TokenType::EqualEqual,
+                lexeme: vec!['=', '='],
                 literal: None,
                 line: 1,
             },
