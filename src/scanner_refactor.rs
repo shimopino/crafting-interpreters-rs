@@ -1,4 +1,4 @@
-use crate::token_refactor::Token;
+use crate::token_refactor::{Token, TokenType};
 
 /// `Scanner`は、入力された文字列をトークンの配列に解析するための構造体
 struct Scanner {
@@ -42,11 +42,33 @@ impl Scanner {
     }
 
     fn scan_token(&mut self) -> Result<Token, String> {
-        todo!()
+        let c = self.advance();
+        let token = match c {
+            '{' => self.create_token(TokenType::LBrace),
+            _ => return Err(String::from("invalid token")),
+        };
+
+        Ok(token)
     }
 
+    fn advance(&mut self) -> char {
+        let c = self.source[self.current];
+        self.current += 1;
+        c
+    }
+
+    /// ソースコードの終わりに達しているかどうかを判定します。
     fn is_at_end(&self) -> bool {
-        todo!()
+        self.current >= self.source.len()
+    }
+
+    fn create_token(&self, ty: TokenType) -> Token {
+        Token {
+            ty,
+            lexeme: self.source[self.start..self.current].to_vec(),
+            literal: None,
+            line: self.line,
+        }
     }
 }
 
