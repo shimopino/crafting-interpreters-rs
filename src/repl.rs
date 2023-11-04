@@ -24,7 +24,8 @@ pub fn run_prompt(stdin: Stdin, mut stdout: Stdout) {
                     writeln!(stdout, "{token:?}").expect("Token should have been written");
                 }
             }
-            Err(err) => writeln!(stdout, "Error while scanning tokens: {err}").expect("Error message should have been written"),
+            Err(err) => writeln!(stdout, "Error while scanning tokens: {err}")
+                .expect("Error message should have been written"),
         }
     }
 }

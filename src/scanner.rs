@@ -109,7 +109,7 @@ impl Scanner {
                 } else if is_alpha(c) {
                     self.identifier()
                 } else {
-                    return Err(String::from(format!("invalid token: {c}")));
+                    return Err(format!("invalid token: {c}"));
                 }
             }
         };
@@ -128,7 +128,7 @@ impl Scanner {
         self.current >= self.source.len()
     }
 
-    fn add_token(&mut self, ty: TokenType) -> () {
+    fn add_token(&mut self, ty: TokenType) {
         self.tokens.push(Token {
             ty,
             lexeme: self.source[self.start..self.current].to_vec(),
@@ -137,7 +137,7 @@ impl Scanner {
         })
     }
 
-    fn add_literal_token(&mut self, ty: TokenType, literal: Literal) -> () {
+    fn add_literal_token(&mut self, ty: TokenType, literal: Literal) {
         self.tokens.push(Token {
             ty,
             lexeme: self.source[self.start..self.current].to_vec(),
