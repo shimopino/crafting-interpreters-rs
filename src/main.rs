@@ -4,9 +4,7 @@ use crate::repl::run_prompt;
 
 pub mod repl;
 pub mod scanner;
-pub mod scanner_refactor;
 pub mod token;
-pub mod token_refactor;
 
 fn main() {
     println!("Lox言語のReplです。");

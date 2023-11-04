@@ -1,6 +1,6 @@
 use std::io::{Stdin, Stdout, Write};
 
-use crate::{scanner::Scanner, token::TokenType};
+use crate::{scanner::scan_tokens, token::TokenType};
 
 pub fn run_prompt(stdin: Stdin, mut stdout: Stdout) {
     loop {
@@ -13,15 +13,18 @@ pub fn run_prompt(stdin: Stdin, mut stdout: Stdout) {
             return;
         }
 
-        let mut scanner = Scanner::new();
-        scanner.scan_tokens(input.as_str());
-        for token in scanner.tokens {
-            if token.ty == TokenType::Eof {
-                writeln!(stdout, "End of line").expect("should set error message");
-                break;
-            }
+        match scan_tokens(&input) {
+            Ok(tokens) => {
+                for token in tokens {
+                    if token.ty == TokenType::Eof {
+                        writeln!(stdout, "End of line").expect("should set error message");
+                        break;
+                    }
 
-            writeln!(stdout, "{token:?}").expect("Token should have been written");
+                    writeln!(stdout, "{token:?}").expect("Token should have been written");
+                }
+            }
+            Err(err) => writeln!(stdout, "Err: {err}").expect("Invalid Token Exists"),
         }
     }
 }
