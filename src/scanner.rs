@@ -604,4 +604,220 @@ mod tests {
             );
         }
     }
+
+    #[test]
+    fn test_lox() {
+        let input = r#"
+        var condAdd = fun(a, b) {
+            if (a > 0) {
+                return a + b;
+            } else {
+                return a;
+            }
+        }
+        "#;
+
+        let expected = vec![
+            Token {
+                ty: TokenType::Var,
+                lexeme: vec!['v', 'a', 'r'],
+                literal: None,
+                line: 2,
+            },
+            Token {
+                ty: TokenType::Identifier,
+                lexeme: vec!['c', 'o', 'n', 'd', 'A', 'd', 'd'],
+                literal: Some(Literal::Identifier("condAdd".to_string())),
+                line: 2,
+            },
+            Token {
+                ty: TokenType::Equal,
+                lexeme: vec!['='],
+                literal: None,
+                line: 2,
+            },
+            Token {
+                ty: TokenType::Fun,
+                lexeme: vec!['f', 'u', 'n'],
+                literal: None,
+                line: 2,
+            },
+            Token {
+                ty: TokenType::LParan,
+                lexeme: vec!['('],
+                literal: None,
+                line: 2,
+            },
+            Token {
+                ty: TokenType::Identifier,
+                lexeme: vec!['a'],
+                literal: Some(Literal::Identifier("a".to_string())),
+                line: 2,
+            },
+            Token {
+                ty: TokenType::Comma,
+                lexeme: vec![','],
+                literal: None,
+                line: 2,
+            },
+            Token {
+                ty: TokenType::Identifier,
+                lexeme: vec!['b'],
+                literal: Some(Literal::Identifier("b".to_string())),
+                line: 2,
+            },
+            Token {
+                ty: TokenType::RParan,
+                lexeme: vec![')'],
+                literal: None,
+                line: 2,
+            },
+            Token {
+                ty: TokenType::LBrace,
+                lexeme: vec!['{'],
+                literal: None,
+                line: 2,
+            },
+            Token {
+                ty: TokenType::If,
+                lexeme: vec!['i', 'f'],
+                literal: None,
+                line: 3,
+            },
+            Token {
+                ty: TokenType::LParan,
+                lexeme: vec!['('],
+                literal: None,
+                line: 3,
+            },
+            Token {
+                ty: TokenType::Identifier,
+                lexeme: vec!['a'],
+                literal: Some(Literal::Identifier("a".to_string())),
+                line: 3,
+            },
+            Token {
+                ty: TokenType::Greater,
+                lexeme: vec!['>'],
+                literal: None,
+                line: 3,
+            },
+            Token {
+                ty: TokenType::Number,
+                lexeme: vec!['0'],
+                literal: Some(Literal::Number(0_f64)),
+                line: 3,
+            },
+            Token {
+                ty: TokenType::RParan,
+                lexeme: vec![')'],
+                literal: None,
+                line: 3,
+            },
+            Token {
+                ty: TokenType::LBrace,
+                lexeme: vec!['{'],
+                literal: None,
+                line: 3,
+            },
+            Token {
+                ty: TokenType::Return,
+                lexeme: vec!['r', 'e', 't', 'u', 'r', 'n'],
+                literal: None,
+                line: 4,
+            },
+            Token {
+                ty: TokenType::Identifier,
+                lexeme: vec!['a'],
+                literal: Some(Literal::Identifier("a".to_string())),
+                line: 4,
+            },
+            Token {
+                ty: TokenType::Plus,
+                lexeme: vec!['+'],
+                literal: None,
+                line: 4,
+            },
+            Token {
+                ty: TokenType::Identifier,
+                lexeme: vec!['b'],
+                literal: Some(Literal::Identifier("b".to_string())),
+                line: 4,
+            },
+            Token {
+                ty: TokenType::SemiColon,
+                lexeme: vec![';'],
+                literal: None,
+                line: 4,
+            },
+            Token {
+                ty: TokenType::RBrace,
+                lexeme: vec!['}'],
+                literal: None,
+                line: 5,
+            },
+            Token {
+                ty: TokenType::Else,
+                lexeme: vec!['e', 'l', 's', 'e'],
+                literal: None,
+                line: 5,
+            },
+            Token {
+                ty: TokenType::LBrace,
+                lexeme: vec!['{'],
+                literal: None,
+                line: 5,
+            },
+            Token {
+                ty: TokenType::Return,
+                lexeme: vec!['r', 'e', 't', 'u', 'r', 'n'],
+                literal: None,
+                line: 6,
+            },
+            Token {
+                ty: TokenType::Identifier,
+                lexeme: vec!['a'],
+                literal: Some(Literal::Identifier("a".to_string())),
+                line: 6,
+            },
+            Token {
+                ty: TokenType::SemiColon,
+                lexeme: vec![';'],
+                literal: None,
+                line: 6,
+            },
+            Token {
+                ty: TokenType::RBrace,
+                lexeme: vec!['}'],
+                literal: None,
+                line: 7,
+            },
+            Token {
+                ty: TokenType::RBrace,
+                lexeme: vec!['}'],
+                literal: None,
+                line: 8,
+            },
+            Token {
+                ty: TokenType::Eof,
+                lexeme: vec![],
+                literal: None,
+                line: 9,
+            },
+        ];
+
+        let tokens = scan_tokens(input).expect("スキャンに失敗しました。");
+        assert_eq!(
+            expected.len(),
+            tokens.len(),
+            "トークンの数が期待と異なります。"
+        );
+
+        for (expected_token, actual_token) in expected.into_iter().zip(tokens.into_iter()) {
+            assert_eq!(
+                expected_token, actual_token,
+                "期待するトークンと実際のトークンが異なります。"
+            );
+        }
+    }
 }
