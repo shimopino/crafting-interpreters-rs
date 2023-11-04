@@ -15,7 +15,7 @@ enum Literal {
 
 enum UnaryOp {
     Bang,
-    Minux,
+    Minus,
 }
 
 enum BinaryOp {
