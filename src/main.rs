@@ -2,6 +2,7 @@ use std::io;
 
 use crate::repl::run_prompt;
 
+pub mod expr;
 pub mod repl;
 pub mod scanner;
 pub mod token;
