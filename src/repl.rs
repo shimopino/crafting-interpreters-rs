@@ -26,13 +26,12 @@ pub fn run_prompt(stdin: Stdin, mut stdout: Stdout) {
                 }
 
                 // Parserによる解析結果の追加
-                if let Some(expr) = Parser::new(tokens).parse() {
-                    writeln!(stdout, "expression: {expr:?}")
-                        .expect("Error message should have been written");
-                } else {
-                    writeln!(stdout, "wrong expression")
-                        .expect("Error message should have been written");
-                }
+                match Parser::new(tokens).parse() {
+                    Ok(expr) => writeln!(stdout, "expression: {expr:?}")
+                        .expect("Error message should have been written"),
+                    Err(e) => writeln!(stdout, "wrong expression: {e}")
+                        .expect("Error message should have been written"),
+                };
             }
             Err(err) => writeln!(stdout, "Error while scanning tokens: {err}")
                 .expect("Error message should have been written"),

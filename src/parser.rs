@@ -11,7 +11,7 @@ pub struct Parser {
 }
 
 #[derive(Debug)]
-struct ParserError(String);
+pub struct ParserError(String);
 
 impl std::error::Error for ParserError {}
 
@@ -26,15 +26,11 @@ impl Parser {
         Parser { tokens, current: 0 }
     }
 
-    pub fn parse(&mut self) -> Option<Expr> {
-        match self.expression() {
-            Ok(expr) => Some(expr),
-            Err(e) => {
-                self.synchronize();
-                println!("{e}");
-                None
-            }
-        }
+    pub fn parse(&mut self) -> Result<Expr, ParserError> {
+        self.expression().map_err(|e| {
+            self.synchronize();
+            e
+        })
     }
 
     fn expression(&mut self) -> Result<Expr, ParserError> {
