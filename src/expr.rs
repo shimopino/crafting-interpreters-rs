@@ -1,11 +1,13 @@
-enum Expr {
+#[derive(PartialEq, Debug)]
+pub enum Expr {
     Literal(Literal),
     Unary(UnaryOp, Box<Expr>),
     Binary(Box<Expr>, BinaryOp, Box<Expr>),
     Grouping(Box<Expr>),
 }
 
-enum Literal {
+#[derive(PartialEq, Debug)]
+pub enum Literal {
     Number,
     String,
     True,
@@ -13,12 +15,14 @@ enum Literal {
     Nil,
 }
 
-enum UnaryOp {
+#[derive(PartialEq, Debug)]
+pub enum UnaryOp {
     Bang,
     Minus,
 }
 
-enum BinaryOp {
+#[derive(PartialEq, Debug)]
+pub enum BinaryOp {
     // 中値演算子
     Plus,
     Minus,
