@@ -282,11 +282,55 @@ fn parse_unary_op(token: &Token) -> Result<UnaryOp, ParserError> {
 #[cfg(test)]
 mod tests {
     use crate::{
-        expr::{BinaryOp, Expr, Literal},
+        expr::{BinaryOp, Expr, Literal, UnaryOp},
+        parser::{parse_binary_op, ParserError},
         scanner::scan_tokens,
+        token::{Token, TokenType},
     };
 
-    use super::Parser;
+    use super::{parse_unary_op, Parser};
+
+    #[test]
+    fn test_parse_unary_op() {
+        let unary_op = parse_unary_op(&Token {
+            ty: TokenType::Minus,
+            lexeme: vec!['-'],
+            literal: None,
+            line: 1,
+        })
+        .expect("Failed to parse Token");
+        assert_eq!(UnaryOp::Minus, unary_op);
+
+        let error = parse_unary_op(&Token {
+            ty: TokenType::Plus,
+            lexeme: vec!['+'],
+            literal: None,
+            line: 1,
+        })
+        .expect_err("Unexpectedly Success to parse Token");
+        assert_eq!(ParserError(format!("should be unaryOp")), error);
+    }
+
+    #[test]
+    fn test_parse_binary_op() {
+        let binary_op = parse_binary_op(&Token {
+            ty: TokenType::EqualEqual,
+            lexeme: vec!['=', '='],
+            literal: None,
+            line: 1,
+        })
+        .expect("Failed to parse Token");
+        assert_eq!(BinaryOp::EqualEqual, binary_op);
+
+        let error = parse_binary_op(&Token {
+            ty: TokenType::Bang,
+            lexeme: vec!['!'],
+            literal: None,
+            line: 1,
+        })
+        .expect_err("Unexpectedly Success to parse Token");
+        assert_eq!(ParserError(format!("should be binaryOp")), error);
+    }
 
     #[test]
     fn test_simple_tokens() {
