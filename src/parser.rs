@@ -3,6 +3,20 @@ use crate::{
     token::{Token, TokenType},
 };
 
+/// 構文解析器を表す構造体です
+///
+/// C言語と同じ優先順位と結合度を採用し、以下の式文法に従って解析を進めていく
+///
+/// * expression -> equality
+/// * equality   -> comparison ( ("!=" | "==") comparison )* ;
+/// * comparison -> term ( (">" | ">=" | "<" | "<=") term )* ;
+/// * term       -> factor ( ("-" | "+") factor )* ;
+/// * factor     -> unary ( ("/" | "*") unary )* ;
+/// * unary      -> ("!" | "-") unary
+///               | primary ;
+/// * primary    -> Number | String | "true" | "false" | "nil"
+///               | "(" expression ")" ;
+///
 pub struct Parser {
     /// `Scanner` によって解析したトークンのシーケンス
     tokens: Vec<Token>,
@@ -10,11 +24,19 @@ pub struct Parser {
     current: usize,
 }
 
-#[derive(Debug)]
+/// 構文解析エラーを表すカスタムエラー型です。
+///
+/// このエラーは、解析中に発生した特定の問題を表すために使用されます。
+/// `String`はエラーメッセージを保持します。
+#[derive(PartialEq, Debug)]
 pub struct ParserError(String);
 
 impl std::error::Error for ParserError {}
 
+/// `ParserError`の表示形式を定義します。
+///
+/// この実装により、`ParserError`は人間が読める形式で出力され、
+/// デバッグやエラーログに役立ちます。
 impl std::fmt::Display for ParserError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "ParserError: {}", self.0)
@@ -33,10 +55,12 @@ impl Parser {
         })
     }
 
+    // expression -> equality
     fn expression(&mut self) -> Result<Expr, ParserError> {
         self.equality()
     }
 
+    // equality   -> comparison ( ("!=" | "==") comparison )* ;
     fn equality(&mut self) -> Result<Expr, ParserError> {
         let mut expr = self.comparison()?;
 
@@ -50,6 +74,7 @@ impl Parser {
         Ok(expr)
     }
 
+    // comparison -> term ( (">" | ">=" | "<" | "<=") term )* ;
     fn comparison(&mut self) -> Result<Expr, ParserError> {
         let mut expr = self.term()?;
 
@@ -68,6 +93,7 @@ impl Parser {
         Ok(expr)
     }
 
+    // term       -> factor ( ("-" | "+") factor )* ;
     fn term(&mut self) -> Result<Expr, ParserError> {
         let mut expr = self.factor()?;
 
@@ -81,6 +107,7 @@ impl Parser {
         Ok(expr)
     }
 
+    // factor     -> unary ( ("/" | "*") unary )* ;
     fn factor(&mut self) -> Result<Expr, ParserError> {
         let mut expr = self.unary()?;
 
@@ -94,6 +121,8 @@ impl Parser {
         Ok(expr)
     }
 
+    // unary      -> ("!" | "-") unary
+    //             | primary ;
     fn unary(&mut self) -> Result<Expr, ParserError> {
         if self.matches(&[TokenType::Bang, TokenType::Minus]) {
             let operator = self.previous();
@@ -105,6 +134,8 @@ impl Parser {
         Ok(self.primary()?)
     }
 
+    // primary    -> Number | String | "true" | "false" | "nil"
+    //             | "(" expression ")" ;
     fn primary(&mut self) -> Result<Expr, ParserError> {
         if self.matches(&[TokenType::False]) {
             return Ok(Expr::Literal(Literal::False));
