@@ -22,7 +22,7 @@ impl std::fmt::Display for ParserError {
 }
 
 impl Parser {
-    fn new(tokens: Vec<Token>) -> Self {
+    pub fn new(tokens: Vec<Token>) -> Self {
         Parser { tokens, current: 0 }
     }
 
@@ -268,7 +268,7 @@ mod tests {
         let tokens = scan_tokens(input).expect("Failed to scan input string");
         println!("{tokens:?}");
 
-        let ast = Parser::new(tokens).parse().expect("Failed to parse Tokens");
+        let expr = Parser::new(tokens).parse().expect("Failed to parse Tokens");
 
         assert_eq!(
             Expr::Binary(
@@ -276,7 +276,7 @@ mod tests {
                 BinaryOp::Plus,
                 Box::new(Expr::Literal(Literal::Number)),
             ),
-            ast
+            expr
         );
     }
 }

@@ -1,6 +1,6 @@
 use std::io::{Stdin, Stdout, Write};
 
-use crate::{scanner::scan_tokens, token::TokenType};
+use crate::{parser::Parser, scanner::scan_tokens, token::TokenType};
 
 pub fn run_prompt(stdin: Stdin, mut stdout: Stdout) {
     loop {
@@ -15,13 +15,23 @@ pub fn run_prompt(stdin: Stdin, mut stdout: Stdout) {
 
         match scan_tokens(&input) {
             Ok(tokens) => {
-                for token in tokens {
+                // Scannerによる解析結果を追加
+                for token in tokens.iter() {
                     if token.ty == TokenType::Eof {
                         writeln!(stdout, "End of line").expect("should set error message");
                         break;
                     }
 
                     writeln!(stdout, "{token:?}").expect("Token should have been written");
+                }
+
+                // Parserによる解析結果の追加
+                if let Some(expr) = Parser::new(tokens).parse() {
+                    writeln!(stdout, "expression: {expr:?}")
+                        .expect("Error message should have been written");
+                } else {
+                    writeln!(stdout, "wrong expression")
+                        .expect("Error message should have been written");
                 }
             }
             Err(err) => writeln!(stdout, "Error while scanning tokens: {err}")
