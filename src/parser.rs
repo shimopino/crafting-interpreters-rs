@@ -131,7 +131,7 @@ impl Parser {
             return Ok(Expr::Unary(unary_op, Box::new(right)));
         }
 
-        Ok(self.primary()?)
+        self.primary()
     }
 
     // primary    -> Number | String | "true" | "false" | "nil"
@@ -263,7 +263,7 @@ fn parse_binary_op(token: &Token) -> Result<BinaryOp, ParserError> {
         TokenType::GreaterEqual => BinaryOp::GreaterEqual,
         TokenType::Less => BinaryOp::Less,
         TokenType::LessEqual => BinaryOp::LessEqual,
-        _ => return Err(ParserError(format!("should be binaryOp"))),
+        _ => return Err(ParserError("should be binaryOp".to_string())),
     };
 
     Ok(binary_op)
@@ -273,7 +273,7 @@ fn parse_unary_op(token: &Token) -> Result<UnaryOp, ParserError> {
     let unary_op = match token.ty {
         TokenType::Bang => UnaryOp::Bang,
         TokenType::Minus => UnaryOp::Minus,
-        _ => return Err(ParserError(format!("should be unaryOp"))),
+        _ => return Err(ParserError("should be unaryOp".to_string())),
     };
 
     Ok(unary_op)
