@@ -1,6 +1,6 @@
 use crate::{
-    expr::{BinaryOp, Expr, Literal, UnaryOp},
-    token::{Token, TokenType},
+    expr::{self, BinaryOp, Expr, UnaryOp},
+    token::{self, Token, TokenType},
 };
 
 /// 構文解析器を表す構造体です
@@ -138,19 +138,32 @@ impl Parser {
     //             | "(" expression ")" ;
     fn primary(&mut self) -> Result<Expr, ParserError> {
         if self.matches(&[TokenType::False]) {
-            return Ok(Expr::Literal(Literal::False));
+            return Ok(Expr::Literal(expr::Literal::False));
         }
         if self.matches(&[TokenType::True]) {
-            return Ok(Expr::Literal(Literal::True));
+            return Ok(Expr::Literal(expr::Literal::True));
         }
         if self.matches(&[TokenType::Nil]) {
-            return Ok(Expr::Literal(Literal::Nil));
+            return Ok(Expr::Literal(expr::Literal::Nil));
         }
         if self.matches(&[TokenType::Number]) {
-            return Ok(Expr::Literal(Literal::Number));
+            if let Some(token::Literal::Number(value)) = self.previous().literal {
+                return Ok(Expr::Literal(expr::Literal::Number(value)));
+            } else {
+                return Err(ParserError(
+                    "parser found Number Literal Token, but literal is not f64 values".to_string(),
+                ));
+            }
         }
         if self.matches(&[TokenType::String]) {
-            return Ok(Expr::Literal(Literal::String));
+            if let Some(token::Literal::Str(value)) = &self.previous().literal {
+                return Ok(Expr::Literal(expr::Literal::String(value.to_owned())));
+            } else {
+                return Err(ParserError(
+                    "parser found String Literal Token, but literal is not String values"
+                        .to_string(),
+                ));
+            }
         }
         if self.matches(&[TokenType::LParan]) {
             let expr = self.expression()?;
@@ -343,9 +356,9 @@ mod tests {
 
         assert_eq!(
             Expr::Binary(
-                Box::new(Expr::Literal(Literal::Number)),
+                Box::new(Expr::Literal(Literal::Number(2.0))),
                 BinaryOp::Plus,
-                Box::new(Expr::Literal(Literal::Number)),
+                Box::new(Expr::Literal(Literal::Number(3.0))),
             ),
             expr
         );
