@@ -3,6 +3,7 @@ use std::io;
 use crate::repl::run_prompt;
 
 pub mod expr;
+pub mod interpreter;
 pub mod parser;
 pub mod repl;
 pub mod scanner;
