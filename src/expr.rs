@@ -8,8 +8,8 @@ pub enum Expr {
 
 #[derive(PartialEq, Debug)]
 pub enum Literal {
-    Number,
-    String,
+    Number(f64),
+    String(String),
     True,
     False,
     Nil,
